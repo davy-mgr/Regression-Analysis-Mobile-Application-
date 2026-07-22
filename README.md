@@ -1,68 +1,83 @@
-# Stunting Prediction API
+# Linear Regression Model — Stunting Prediction
 
-FastAPI service that predicts a toddler's Height-for-Age Z-Score from
-gender, height, weight-for-age z-score, and weight-for-height z-score.
+Predicts a toddler's WHO Height-for-Age Z-Score from gender, height,
+weight-for-age z-score, and weight-for-height z-score.
 
-## 1. Add your model files
-
-Copy the three files you downloaded from the Colab notebook into `app/models/`:
+## Structure
 
 ```
-app/models/best_model_random_forest.pkl
-app/models/scaler.pkl
-app/models/feature_names.pkl
+linear_regression_model/
+├── summative/
+│   ├── linear_regression/
+│   │   └── multivariate.ipynb      # EDA, feature engineering, model training/comparison
+│   ├── API/
+│   │   └── prediction.py            # FastAPI service (Pydantic schema, CORS, /predict, /retrain)
+│   └── FlutterApp/                  # Single-page Flutter app calling the API
+├── pyproject.toml
+└── uv.lock
 ```
 
-## 2. Run locally
+## Package & environment management (uv)
+
+This project uses [uv](https://docs.astral.sh/uv/) for all dependency and
+virtual environment management — no `pip`/`venv`/`requirements.txt`.
+
+**Install uv** (one-time, if you don't have it):
+```bash
+curl -LsSf https://astral.sh/uv/install.sh | sh        # macOS/Linux
+powershell -c "irm https://astral.sh/uv/install.ps1 | iex"   # Windows
+```
+
+**Install project dependencies** (creates `.venv` automatically, reads the
+locked versions from `uv.lock`):
+```bash
+uv sync
+```
+
+To also install notebook-only dependencies (matplotlib, seaborn, jupyter):
+```bash
+uv sync --group notebook
+```
+
+## 1. Add your trained model artifacts
+
+Copy these three files (produced by running `multivariate.ipynb`) into
+`summative/API/`:
+```
+summative/API/best_model_random_forest.pkl
+summative/API/scaler.pkl
+summative/API/feature_names.pkl
+```
+
+## 2. Run the API locally
 
 ```bash
-python -m venv venv
-source venv/bin/activate        # Windows: venv\Scripts\activate
-pip install -r requirements.txt
-uvicorn app.main:app --reload
+uv run uvicorn summative.API.prediction:app --reload
 ```
 
-Open http://127.0.0.1:8000/docs to see the Swagger UI and test `/predict`
-and `/retrain` directly in the browser.
+Swagger UI: http://127.0.0.1:8000/docs
 
-Example request body for `/predict`:
-```json
-{
-  "gender": 1,
-  "height": 87.3,
-  "zscore_wa": -1.35,
-  "zscore_wh": -0.62
-}
+## 3. Run the notebook
+
+```bash
+uv run --group notebook jupyter lab summative/linear_regression/multivariate.ipynb
 ```
+(Or open it in Google Colab / VS Code — see the notebook itself for
+Google Drive setup so you don't need to re-upload the dataset each time.)
 
-## 3. Deploy to Render (free tier)
+## 4. Deploy to Render
 
-1. Push this folder to a GitHub repo (must include `app/models/*.pkl` --
-   don't gitignore them, the API needs them at startup).
-2. Go to https://render.com -> **New** -> **Web Service**.
-3. Connect your GitHub repo.
-4. Configure:
-   - **Environment**: Python 3
-   - **Build Command**: `pip install -r requirements.txt`
-   - **Start Command**: `uvicorn app.main:app --host 0.0.0.0 --port $PORT`
-5. Click **Create Web Service**. Render will build and deploy automatically.
-6. Once live, your Swagger UI is at:
-   `https://<your-service-name>.onrender.com/docs`
+1. Push this whole `linear_regression_model/` folder to GitHub (include the
+   `.pkl` files in `summative/API/` — don't gitignore them).
+2. Render → **New** → **Web Service** → connect the repo.
+3. Configure:
+   - **Build Command**: `pip install uv && uv sync --frozen`
+   - **Start Command**: `uv run uvicorn summative.API.prediction:app --host 0.0.0.0 --port $PORT`
+4. Once live, Swagger UI is at `https://<your-service-name>.onrender.com/docs`.
+5. Update `ALLOWED_ORIGINS` in `prediction.py` with your deployed Flutter
+   web origin if/when you deploy the Flutter web build (native mobile
+   builds aren't affected by CORS at all).
 
-## 4. Update CORS before going live
+## 5. Flutter app
 
-Open `app/main.py` and add your deployed Flutter web app's origin to
-`ALLOWED_ORIGINS` (see the comment block above the CORS middleware for the
-full reasoning on what's allowed/restricted and why). If your Flutter app
-is a native mobile build (not web), CORS does not apply to it at all --
-only a Flutter *web* build calling this API from a browser needs to be
-listed here.
-
-## Endpoints
-
-| Method | Path | Description |
-|---|---|---|
-| GET | `/` | Health check |
-| GET | `/docs` | Swagger UI |
-| POST | `/predict` | Predict Height-for-Age Z-Score from 4 inputs |
-| POST | `/retrain` | Upload a CSV/XLSX of new labeled data to retrain the model |
+See `summative/FlutterApp/README.md` for setup and run instructions.
