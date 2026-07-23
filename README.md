@@ -10,6 +10,13 @@ measurements (gender, height, weight-for-age and weight-for-height
 z-scores), giving health workers a fast, data-driven way to flag at-risk
 children for follow-up without waiting on full growth-chart calculations.
 
+**Dataset:** *Stunting and Nutritional Status of Toddlers — Jeneponto,
+Indonesia* (2021–2024), sourced from Mendeley Data
+(https://data.mendeley.com/datasets/wzwpc9j5bx/4). 40,071 individual
+toddler records (age 0–60 months) with gender, height, weight, and
+WHO-computed weight-for-age, height-for-age, and weight-for-height
+z-scores; 39,521 rows remain after cleaning (see notebook Section 2).
+
 ## Live API (Swagger UI)
 
 **https://regression-analysis-mobile-application-1ab3.onrender.com/docs**
