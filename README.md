@@ -1,83 +1,51 @@
-# Linear Regression Model — Stunting Prediction
+# Stunting Predictor — Flutter App
 
-Predicts a toddler's WHO Height-for-Age Z-Score from gender, height,
-weight-for-age z-score, and weight-for-height z-score.
+Single-page app that calls the Stunting Prediction API
+(`https://regression-analysis-mobile-application-1ab3.onrender.com`) to
+predict a toddler's Height-for-Age Z-Score.
 
-## Structure
+## Setup
 
-```
-linear_regression_model/
-├── summative/
-│   ├── linear_regression/
-│   │   └── multivariate.ipynb      # EDA, feature engineering, model training/comparison
-│   ├── API/
-│   │   └── prediction.py            # FastAPI service (Pydantic schema, CORS, /predict, /retrain)
-│   └── FlutterApp/                  # Single-page Flutter app calling the API
-├── pyproject.toml
-└── uv.lock
-```
+1. Install Flutter SDK if you haven't: https://docs.flutter.dev/get-started/install
+2. Open this folder in VS Code (with the Flutter extension) or Android Studio.
+3. Get dependencies:
+   ```bash
+   flutter pub get
+   ```
 
-## Package & environment management (uv)
+## Run
 
-This project uses [uv](https://docs.astral.sh/uv/) for all dependency and
-virtual environment management — no `pip`/`venv`/`requirements.txt`.
+- **Mobile (emulator or connected device):**
+  ```bash
+  flutter run
+  ```
+- **Web (Chrome):**
+  ```bash
+  flutter run -d chrome
+  ```
 
-**Install uv** (one-time, if you don't have it):
-```bash
-curl -LsSf https://astral.sh/uv/install.sh | sh        # macOS/Linux
-powershell -c "irm https://astral.sh/uv/install.ps1 | iex"   # Windows
-```
+## What's on the page
 
-**Install project dependencies** (creates `.venv` automatically, reads the
-locked versions from `uv.lock`):
-```bash
-uv sync
-```
+- 4 text fields matching the API's required inputs: Gender (0/1), Height (cm),
+  Weight-for-Age Z-Score, Weight-for-Height Z-Score
+- Client-side validation matches the API's Pydantic range constraints, so
+  bad input is caught before a network call is even made
+- A "Predict" button that calls `POST /predict`
+- A single display area below the button that shows either:
+  - the predicted Z-Score + stunting risk category, or
+  - a clear error message (out-of-range values, missing fields, or a
+    network/server problem)
 
-To also install notebook-only dependencies (matplotlib, seaborn, jupyter):
-```bash
-uv sync --group notebook
-```
+## Note on Render free tier
 
-## 1. Add your trained model artifacts
+The API may take 30-60 seconds to respond on the very first request if the
+Render service has been idle (free instances spin down automatically). The
+app's HTTP call uses a 60-second timeout to accommodate this — if it still
+times out, just tap Predict again once the service has woken up.
 
-Copy these three files (produced by running `multivariate.ipynb`) into
-`summative/API/`:
-```
-summative/API/best_model_random_forest.pkl
-summative/API/scaler.pkl
-summative/API/feature_names.pkl
-```
+## Before submitting / demoing
 
-## 2. Run the API locally
-
-```bash
-uv run uvicorn summative.API.prediction:app --reload
-```
-
-Swagger UI: http://127.0.0.1:8000/docs
-
-## 3. Run the notebook
-
-```bash
-uv run --group notebook jupyter lab summative/linear_regression/multivariate.ipynb
-```
-(Or open it in Google Colab / VS Code — see the notebook itself for
-Google Drive setup so you don't need to re-upload the dataset each time.)
-
-## 4. Deploy to Render
-
-1. Push this whole `linear_regression_model/` folder to GitHub (include the
-   `.pkl` files in `summative/API/` — don't gitignore them).
-2. Render → **New** → **Web Service** → connect the repo.
-3. Configure:
-   - **Build Command**: `pip install uv && uv sync --frozen`
-   - **Start Command**: `uv run uvicorn summative.API.prediction:app --host 0.0.0.0 --port $PORT`
-4. Once live, Swagger UI is at `https://<your-service-name>.onrender.com/docs`.
-5. Update `ALLOWED_ORIGINS` in `prediction.py` with your deployed Flutter
-   web origin if/when you deploy the Flutter web build (native mobile
-   builds aren't affected by CORS at all).
-
-## 5. Flutter app
-
-See `summative/FlutterApp/README.md` for setup and run instructions.
+If you deploy this app itself to the web (e.g. Firebase Hosting, GitHub
+Pages), get that URL and add it to `ALLOWED_ORIGINS` in the FastAPI
+service's `app/main.py`, otherwise the browser will block the request due
+to CORS. Native mobile builds (Android/iOS) are not affected by CORS at all.

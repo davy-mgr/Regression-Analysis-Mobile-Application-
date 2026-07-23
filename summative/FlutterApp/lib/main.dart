@@ -35,9 +35,7 @@ class PredictionPage extends StatefulWidget {
 }
 
 class _PredictionPageState extends State<PredictionPage> {
-  // -------------------------------------------------------------------
-  // IMPORTANT: replace with your own deployed Render URL if it changes.
-  // -------------------------------------------------------------------
+
   static const String apiBaseUrl =
       'https://regression-analysis-mobile-application-1ab3.onrender.com';
 
@@ -61,7 +59,6 @@ class _PredictionPageState extends State<PredictionPage> {
     super.dispose();
   }
 
-  // ---- Validators mirror the API's Pydantic range constraints ----
   String? _validateGender(String? value) {
     if (value == null || value.trim().isEmpty) return 'Required';
     final parsed = int.tryParse(value.trim());
@@ -113,8 +110,6 @@ class _PredictionPageState extends State<PredictionPage> {
             body: jsonEncode(requestBody),
           )
           .timeout(const Duration(seconds: 60));
-      // 60s timeout: Render's free tier can take ~30-60s to wake up
-      // from idle on the first request.
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body) as Map<String, dynamic>;
