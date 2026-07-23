@@ -21,9 +21,6 @@ from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import mean_squared_error, r2_score
 
-# --------------------------------------------------------------------------
-# Paths — model artifacts live alongside this script
-# --------------------------------------------------------------------------
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 MODEL_PATH = os.path.join(BASE_DIR, "best_model_random_forest.pkl")
 SCALER_PATH = os.path.join(BASE_DIR, "scaler.pkl")
@@ -31,12 +28,6 @@ FEATURES_PATH = os.path.join(BASE_DIR, "feature_names.pkl")
 FEATURE_ORDER = ["Gender", "Height", "Z-Score W/A", "Z-Score W/H"]
 
 
-# --------------------------------------------------------------------------
-# Pydantic schemas — types + range constraints derived from the training
-# dataset (39,521 cleaned toddler records, ages 0-60 months, Indonesia
-# 2021-2024). See summative/linear_regression/multivariate.ipynb for the
-# full cleaning and feature-engineering process.
-# --------------------------------------------------------------------------
 class PredictionRequest(BaseModel):
     model_config = ConfigDict(
         json_schema_extra={
@@ -80,10 +71,6 @@ class RetrainResponse(BaseModel):
     new_test_rmse: float
     message: str
 
-
-# --------------------------------------------------------------------------
-# Model service — loads artifacts once at startup, handles predict/retrain
-# --------------------------------------------------------------------------
 class ModelService:
     def __init__(self):
         self.model = joblib.load(MODEL_PATH)
@@ -135,10 +122,6 @@ class ModelService:
 
 model_service = ModelService()
 
-
-# --------------------------------------------------------------------------
-# FastAPI app
-# --------------------------------------------------------------------------
 app = FastAPI(
     title="Stunting Prediction API",
     description="Predicts Height-for-Age Z-Score for toddlers (0-60 months) "
@@ -146,25 +129,6 @@ app = FastAPI(
     version="1.0.0",
 )
 
-# --------------------------------------------------------------------------
-# CORS configuration
-# --------------------------------------------------------------------------
-# WHAT IS ALLOWED:
-#   - allow_origins: the Flutter web app's origin(s), plus localhost for
-#     development. We do NOT use "*" because this API exposes a /retrain
-#     endpoint — allowing arbitrary origins would let any website silently
-#     trigger retraining or flood /predict from a visitor's browser.
-#   - allow_methods: GET and POST only, the only verbs this API exposes.
-#   - allow_headers: Content-Type and Accept, all that JSON/file-upload
-#     requests need.
-#
-# WHAT IS RESTRICTED:
-#   - No wildcard origin in production — add your deployed Flutter *web*
-#     origin explicitly below. Native mobile builds are not subject to
-#     browser CORS at all, so they're unaffected either way.
-#   - Credentials (cookies/auth headers) are not allowed cross-origin since
-#     this API is stateless and uses no cookie-based auth.
-# --------------------------------------------------------------------------
 ALLOWED_ORIGINS = [
     "http://localhost:3000",
     "http://127.0.0.1:3000",

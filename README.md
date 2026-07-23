@@ -21,20 +21,6 @@ children for follow-up without waiting on full growth-chart calculations.
 
 **[Add your YouTube link here once recorded]**
 
-## Structure
-
-```
-linear_regression_model/
-├── summative/
-│   ├── linear_regression/
-│   │   └── multivariate.ipynb      # EDA, feature engineering, model training/comparison, prediction script
-│   ├── API/
-│   │   ├── prediction.py            # FastAPI service (Pydantic schema, CORS, /predict, /retrain)
-│   │   └── requirements.txt         # exported from uv.lock, for platforms that require it
-│   └── FlutterApp/                  # Single-page Flutter app calling the API
-├── pyproject.toml
-└── uv.lock
-```
 
 ## Package & environment management (uv)
 
