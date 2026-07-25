@@ -29,13 +29,13 @@ z-scores; 39,521 rows remain after cleaning (see notebook Section 2).
 
 ## Package & environment management (uv)
 
-This project uses [uv](https://docs.astral.sh/uv/) for dependency and
+This project uses uv for dependency and
 virtual environment management.
 
 **Install uv** (one-time):
 ```bash
-curl -LsSf https://astral.sh/uv/install.sh | sh        # macOS/Linux
-powershell -c "irm https://astral.sh/uv/install.ps1 | iex"   # Windows
+curl -LsSf https://astral.sh/uv/install.sh | sh        # if you use macOS/Linux
+powershell -c "irm https://astral.sh/uv/install.ps1 | iex"   # if you use Windows
 ```
 
 **Install dependencies:**
@@ -43,7 +43,7 @@ powershell -c "irm https://astral.sh/uv/install.ps1 | iex"   # Windows
 uv sync
 ```
 Add `--group notebook` as well if you want to run the Jupyter notebook
-locally (installs matplotlib, seaborn, jupyter, etc.).
+locally (installs matplotlib, seaborn, jupyter, and others.).
 
 ## Run the API locally
 
