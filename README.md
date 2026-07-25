@@ -67,7 +67,8 @@ Swagger UI: http://127.0.0.1:8000/docs
    Select a connected device or emulator when prompted. The app is
    pre-configured to call the live Render API above, so no local backend is
    required to use the mobile app.
-3. Enter the four values (Gender, Height, Weight-for-Age Z-Score,
+3. If you use chrome or another browser, run the app on port 3000 or 5000.
+4. Enter the four values (Gender, Height, Weight-for-Age Z-Score,
    Weight-for-Height Z-Score) and tap **Predict**.
 
 Full setup/run details: `summative/FlutterApp/README.md`.
