@@ -21,8 +21,8 @@ z-scores; 39,521 rows remain after cleaning (see notebook Section 2).
 
 **https://regression-analysis-mobile-application-1ab3.onrender.com/docs**
 
-> Note: the free Render tier spins down after inactivity — the first
-> request may take 30-60 seconds to respond while the service wakes up.
+Please first wake up the render site before you try to run the app.
+
 
 ## Video Demo
 
@@ -31,13 +31,13 @@ z-scores; 39,521 rows remain after cleaning (see notebook Section 2).
 
 ## Package & environment management (uv)
 
-This project uses [uv](https://docs.astral.sh/uv/) for dependency and
+This project uses uv for dependency and
 virtual environment management.
 
 **Install uv** (one-time):
 ```bash
-curl -LsSf https://astral.sh/uv/install.sh | sh        # macOS/Linux
-powershell -c "irm https://astral.sh/uv/install.ps1 | iex"   # Windows
+curl -LsSf https://astral.sh/uv/install.sh | sh        # if you use macOS/Linux
+powershell -c "irm https://astral.sh/uv/install.ps1 | iex"   # if you use Windows
 ```
 
 **Install dependencies:**
@@ -45,7 +45,7 @@ powershell -c "irm https://astral.sh/uv/install.ps1 | iex"   # Windows
 uv sync
 ```
 Add `--group notebook` as well if you want to run the Jupyter notebook
-locally (installs matplotlib, seaborn, jupyter, etc.).
+locally (installs matplotlib, seaborn, jupyter, and others.).
 
 ## Run the API locally
 
@@ -69,7 +69,8 @@ Swagger UI: http://127.0.0.1:8000/docs
    Select a connected device or emulator when prompted. The app is
    pre-configured to call the live Render API above, so no local backend is
    required to use the mobile app.
-3. Enter the four values (Gender, Height, Weight-for-Age Z-Score,
+3. If you use chrome or another browser, run the app on port 3000 or 5000.
+4. Enter the four values (Gender, Height, Weight-for-Age Z-Score,
    Weight-for-Height Z-Score) and tap **Predict**.
 
 Full setup/run details: `summative/FlutterApp/README.md`.
