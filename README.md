@@ -21,8 +21,6 @@ z-scores; 39,521 rows remain after cleaning (see notebook Section 2).
 
 **https://regression-analysis-mobile-application-1ab3.onrender.com/docs**
 
-> Note: the free Render tier spins down after inactivity — the first
-> request may take 30-60 seconds to respond while the service wakes up.
 
 ## Video Demo
 
