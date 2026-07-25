@@ -24,11 +24,6 @@ z-scores; 39,521 rows remain after cleaning (see notebook Section 2).
 > Note: the free Render tier spins down after inactivity — the first
 > request may take 30-60 seconds to respond while the service wakes up.
 
-## Video Demo
-
-**[Add your YouTube link here once recorded]**
-
-
 ## Package & environment management (uv)
 
 This project uses [uv](https://docs.astral.sh/uv/) for dependency and
